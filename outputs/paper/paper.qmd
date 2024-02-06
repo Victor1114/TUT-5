@@ -1,5 +1,5 @@
 ---
-title: "Lived years of prime ministers of Australia"
+title: "Lived Years of Prime Ministers of Australia"
 author: 
   - Yuchen Chen
 thanks: "Code and data are available at: https://github.com/Victor1114/TUT-5.git"
