@@ -1,0 +1,95 @@
+---
+title: "Lived years of prime ministers of Australia"
+author: 
+  - Yuchen Chen
+thanks: "Code and data are available at: https://github.com/Victor1114/TUT-5.git"
+date: today
+date-format: long
+abstract: "This paper presents a case study examining the lifespan of Australian Prime Ministers, correlating their longevity with the years of their birth."
+format: pdf
+number-sections: true
+bibliography: references.bib
+---
+
+```{r}
+#| include: false
+#| warning: false
+#| message: false
+
+install.packages("here")
+install.packages("knitr")
+
+library(knitr)
+library(tidyverse)
+library(here)
+
+```
+
+
+# Introduction
+The paper presents research into the  lifespan among Australian Prime Ministers, with a focus on the correlation between their birth years and longevity by using tool R(@citeR). The research methodology includes extracting biographical data from Wikipedia through the rvest(@rvest) tool and tidy the dataset. Finally, using a visual analysis through graphing the cleaned data elucidates the historical longevity trends among Australia's prime leaders.
+
+# Data {#sec-data}
+load rvest and then download the page using read_html()
+First I load rvest(@rvest) and then download the page using read_html().The using too SelectorGadget to pick and choose the elements that we want use.Next, using separate()(@tidyr) and str_extract()(@stringr) to further clean data. Lastly, I clean up the columns to get a completely and ideally table.
+
+In qmd document, using kable function from knitr(@knitr) to create a table@tbl-prime that has a row for each prime minister, a column for their name, and a column each for the birth and death years.
+```{r}
+#| label: tbl-prime
+#| tbl-cap: Australia Prime Ministers, by how old they were when they died
+#| echo: false
+#| warning: false
+#| message: false
+
+cleaned_data <- read_csv(here::here("outputs/data/cleaned_data.csv"))
+cleaned_data |>
+  kable(
+    col.names = c("Prime Minister", "Birth year", "Death year", "Age at death")
+  )
+```
+Next, making a graph@fig-prime that illustrates how long each prime minister lived and using different colors to show whether they are alive or not.
+```{r}
+
+#| label: fig-prime
+#| fig-cap: How long each prime minister of the Australia lived
+#| echo: false
+#| warning: false
+#| message: false
+
+cleaned_data <- read_csv(here::here("outputs/data/cleaned_data.csv"), show_col_types = FALSE)
+
+cleaned_data |>
+  mutate(
+    still_alive = if_else(is.na(died), "Yes", "No"),
+    died = if_else(is.na(died), as.integer(2023), died)
+  ) |>
+  mutate(name = as_factor(name)) |>
+  ggplot(
+    aes(x = born, xend = died, y = name, yend = name, color = still_alive)
+    ) +
+  geom_segment() +
+  labs(
+    x = "Year of birth", y = "Prime minister", color = "PM is currently alive"
+    ) +
+  theme_minimal() +
+  scale_color_brewer(palette = "Set1") +
+  theme(legend.position = "bottom")
+```
+
+# Findings
+- The most recent Prime Ministers who born in the mid-20th century on wards, are still living.That suggesting a trend for current and future leaders toward longer life expectancies 
+
+- The earlier prime ministers generally having shorter lifespans compared to those born later.
+
+- There is a larger number of recent Prime Ministers still alive.
+
+
+The longevity trends among Australian Prime Ministers reveal a compelling story of changing times and improved living standards. The early statesmen of the 19th century had lifespans typical of their era, often not exceeding much beyond 70 years. However, as time moved forward, so did the age at which these leaders lived, reflecting the broader societal advancements in health and well-being. It's striking to see the shift from red to blue on the graph, indicating those who have passed compared to those still with us.It illustrate the improvement of medical level and also social.
+
+# Personal Feelings
+I spend more time on debug of my codes than I expect. It's difficult even imitating the code for different materials and hard to image to do a project without any instruction and code. But I feel interesting when I solve the tiny bug one by one. It's not only feeling a sense of accomplishment, but also makes me more familiar with R code. And when I fished it, I feel I solve all problems i faced is an amazing feeling. In this project, I feel it improve my ability of solving the problem in R,and I will keep humble and trying to do better project. Moreover, doing the project earlier next time.
+
+
+# References
+
+https://en.wikipedia.org/wiki/List_of_prime_ministers_of_Australia
